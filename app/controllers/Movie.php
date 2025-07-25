@@ -1,3 +1,6 @@
+
+
+
 <?php
 
 class Movie extends Controller
@@ -9,6 +12,7 @@ class Movie extends Controller
 
     public function search()
     {
+
         if (!isset($_GET['movie']) || empty(trim($_GET['movie']))) {
             header("Location: /Movie");
             exit;
@@ -17,6 +21,7 @@ class Movie extends Controller
         $api = $this->model('Api');
         $movie_title = htmlspecialchars(trim($_GET['movie']));
         $movie = $api->search_movie($movie_title);
+
 
         if (!$movie || $movie['Response'] === 'False') {
             die("Movie not found.");

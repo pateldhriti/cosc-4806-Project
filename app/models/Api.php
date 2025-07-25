@@ -2,9 +2,10 @@
 
 class Api
 {
-    // Fetch movie details from OMDB
     public function search_movie($title)
     {
+        
+
         $api_key = getenv('OMDB'); // Secret key from Replit
         $url = "http://www.omdbapi.com/?apikey=" . urlencode($api_key) . "&t=" . urlencode($title);
 
