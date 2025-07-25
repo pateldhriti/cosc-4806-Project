@@ -1,23 +1,32 @@
-<div class="container mt-5" style="max-width: 400px;">
-  <h2 class="mb-4">Register</h2>
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 85vh;">
+  <div class="card shadow p-4" style="width: 100%; max-width: 400px;">
+    <h3 class="text-center mb-4">📝 Register</h3>
 
-  <?php if (!empty($data['error'])): ?>
-    <div class="alert alert-danger"><?= $data['error'] ?></div>
-  <?php endif; ?>
+    <?php if (!empty($data['error'])): ?>
+      <div class="alert alert-danger"><?= $data['error'] ?></div>
+    <?php endif; ?>
 
-  <form method="post" action="/index.php?url=register/create">
-    <div class="mb-3">
-      <label class="form-label">Username</label>
-      <input type="text" name="username" class="form-control" required>
-    </div>
+    <?php if (!empty($_SESSION['flash'])): ?>
+      <div class="alert alert-success"><?= $_SESSION['flash'] ?></div>
+      <?php unset($_SESSION['flash']); ?>
+    <?php endif; ?>
 
-    <div class="mb-3">
-      <label class="form-label">Password</label>
-      <input type="password" name="password" class="form-control" required>
-    </div>
+    <form action="/index.php?url=register/create" method="post">
+      <div class="mb-3">
+        <label class="form-label">Username</label>
+        <input type="text" name="username" class="form-control" placeholder="Choose a username" required>
+      </div>
 
-    <button type="submit" class="btn btn-success">Register</button>
-  </form>
+      <div class="mb-3">
+        <label class="form-label">Password</label>
+        <input type="password" name="password" class="form-control" placeholder="Create a password" required>
+      </div>
 
-  <p class="mt-3">Already have an account? <a href="/index.php?url=login">Login here</a></p>
+      <button type="submit" class="btn btn-success w-100">Register</button>
+    </form>
+
+    <p class="mt-3 text-center">
+      Already registered? <a href="/index.php?url=login">Login here</a>
+    </p>
+  </div>
 </div>
