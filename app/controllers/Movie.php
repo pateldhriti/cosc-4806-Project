@@ -1,5 +1,6 @@
 <?php
 require_once(__DIR__ . '/../core/Database.php');
+require_once(__DIR__ . '/../models/Api.php'); // ✅ Fix for "Api class not found"
 
 class Movie extends Controller {
 
@@ -50,38 +51,26 @@ class Movie extends Controller {
 
     public function saveRating()
     {
-        file_put_contents('debug.log', "saveRating called\n", FILE_APPEND);
-        file_put_contents('debug.log', json_encode($_POST) . "\n", FILE_APPEND);
-        
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            file_put_contents('debug.log', json_encode($_POST));
-            if (session_status() === PHP_SESSION_NONE) {
-                session_start();
-            }
+            $movieTitle = trim($_POST['title']);
+            $rating = intval($_POST['rating']);
 
-            $title = $_POST['title'] ?? '';
-            $rating = isset($_POST['rating']) ? (int) $_POST['rating'] : 0;
+            // ✅ Get the user ID from the session
+            $user_id = isset($_SESSION['user']['id']) ? $_SESSION['user']['id'] : 0;
 
-            if ($rating < 1 || $rating > 5 || empty($title)) {
-                die("❌ Invalid rating or movie title.");
-            }
-
-            $user_id = $_SESSION['user_id'] ?? 0;
-
-            if (!function_exists('db_connect')) {
-                require_once(__DIR__ . '/../core/Database.php');
-            }
-
+            // ✅ Save to database
             $db = db_connect();
+            $stmt = $db->prepare("INSERT INTO ratings (user_id, movie_title, rating, created_at) VALUES (?, ?, ?, NOW())");
+            $stmt->execute([$user_id, $movieTitle, $rating]);
 
-            $stmt = $db->prepare("INSERT INTO ratings (user_id, movie_title, rating) VALUES (?, ?, ?)");
-            $stmt->execute([$user_id, $title, $rating]);
+            // ✅ Optional: generate AI review
+            $api = new Api();  // This is the line that needs require_once
+            $review = $api->getGeminiReview($movieTitle, $rating);
 
-            header("Location: /index.php?url=Movie/review/" . urlencode($title) . "/" . $rating);
-
+            // ✅ Redirect to review page
+            header('Location: /index.php?url=Movie/review/' . urlencode($movieTitle) . '/' . $rating);
             exit;
-        } else {
-            die("Invalid request method.");
         }
     }
+
 }
