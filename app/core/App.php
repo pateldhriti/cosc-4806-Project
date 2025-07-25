@@ -1,14 +1,13 @@
 <?php
 
 class App {
-    protected $controller = 'Movie'; // ✅ Capitalized to match Movie.php
+    protected $controller = 'Movie';
     protected $method = 'index';
     protected $params = [];
 
     public function __construct() {
         $url = $this->parseUrl();
 
-        // ✅ Capitalize controller name to match file name (case-sensitive file system)
         if (file_exists('app/controllers/' . ucfirst($url[0]) . '.php')) {
             $this->controller = ucfirst($url[0]);
             unset($url[0]);
@@ -33,6 +32,6 @@ class App {
         if (isset($_GET['url'])) {
             return explode('/', filter_var(rtrim($_GET['url'], '/'), FILTER_SANITIZE_URL));
         }
-        return ['Movie']; // ✅ Default fallback is also capitalized
+        return ['Movie'];
     }
 }
