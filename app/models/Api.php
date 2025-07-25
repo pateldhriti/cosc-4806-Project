@@ -1,48 +1,49 @@
 <?php
 
-class Api {
-  private $omdb_key;
-  private $gemini_key;
+class Api
+{
+    // Fetch movie details from OMDB
+    public function search_movie($title)
+    {
+        $api_key = getenv('OMDB'); // Secret key from Replit
+        $url = "http://www.omdbapi.com/?apikey=" . urlencode($api_key) . "&t=" . urlencode($title);
 
-  public function __construct() {
-    $this->omdb_key = $_ENV['omdb_key'];
-    $this->gemini_key = $_ENV['gemini_key'];
-  }
+        $response = file_get_contents($url);
+        if (!$response) {
+            return false;
+        }
 
-  public function search_movie($title) {
-    $key = $_ENV['omdb_key'];
-    $url = "http://www.omdbapi.com/?apikey=$KEY&T=" . urlencode($title);
-    $json= file_get_contents($url);
-    return json_decode($json, true);
-  }
+        $data = json_decode($response, true);
+        return $data;
+    }
 
-  public function getGeminiReview($title, $rating) {
+    // Generate AI review using Gemini API
+    public function getGeminiReview($title, $rating)
+    {
+        $api_key = getenv('GEMINI'); // Secret key from Replit
+        $prompt = "Write a short and friendly review of the movie '$title' which is rated $rating out of 5 stars.";
 
-    $url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=" . $this->gemini_key;
-    $prompt ="Give a review for the movie " . $title . " with a rating of " . $rating . " out of 5.";
+        $postData = [
+            "contents" => [[
+                "parts" => [[ "text" => $prompt ]]
+            ]]
+        ];
 
-    $postData = json_encode([
-        "contents" => [
-            [
-                "role" => "user",
-                "parts" => [
-                    ["text" => $prompt]
-                ]
-            ]
-        ]
-    ]);
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=$api_key");
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($postData));
 
-    $ch = curl_init($url);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_POST, true);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, $postData);
-    curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+        $response = curl_exec($ch);
+        if (curl_errno($ch)) {
+            return "AI Error: " . curl_error($ch);
+        }
 
-    $response = curl_exec($ch);
-    curl_close($ch);
+        curl_close($ch);
 
-    $result = json_decode($response, true);
-
-    return $json['candidates'][0]['content']['parts'][0]['text'] ?? "No review available.";
-  }
+        $data = json_decode($response, true);
+        return $data['candidates'][0]['content']['parts'][0]['text'] ?? "No AI review available.";
+    }
 }

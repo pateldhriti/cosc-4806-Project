@@ -20,10 +20,11 @@
       <?php endfor; ?>
 
       <?php if (!empty($data['review'])): ?>
-        <hr>
-        <h4>🧠 Gemini AI Review</h4>
-        <p><?= nl2br(htmlspecialchars($data['review'])) ?></p>
+          <hr>
+          <h4>🧠 Gemini AI Review</h4>
+          <p><?= nl2br(htmlspecialchars($data['review'])) ?></p>
       <?php endif; ?>
+
       
 </div>
     </div>
