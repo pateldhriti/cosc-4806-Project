@@ -87,25 +87,20 @@ class Movie extends Controller {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $movieTitle = ucwords(strtolower(trim($_POST['title'])));
             $rating = intval($_POST['rating']);
+            $userReview = trim($_POST['user_review'] ?? '');
 
-            // ✅ Get the user ID from the session (or guest)
             $user_id = isset($_SESSION['user']['id']) ? $_SESSION['user']['id'] : 0;
 
-            // ✅ Save to database
             $db = db_connect();
-            $userReview = trim($_POST['user_review'] ?? '');
-            $stmt = $db->prepare("INSERT INTO ratings (user_id, movie_title, rating, created_at) VALUES (?, ?, ?, NOW())");
-            $stmt->execute([$user_id, $movieTitle, $rating]);
+            $stmt = $db->prepare("INSERT INTO ratings (user_id, movie_title, rating, user_review, created_at) VALUES (?, ?, ?, ?, NOW())");
+            $stmt->execute([$user_id, $movieTitle, $rating, $userReview]);
 
-            // ✅ Optional: generate AI review
+            // Optional: AI review
             require_once(__DIR__ . '/../models/Api.php');
             $api = new Api();
             $review = $api->getGeminiReview($movieTitle, $rating);
 
-            // ✅ Add flash message
             $_SESSION['flash'] = "🎉 Thanks for rating $movieTitle!";
-
-            // ✅ Redirect to review page
             header('Location: /index.php?url=Movie/review/' . urlencode($movieTitle) . '/' . $rating);
             exit;
         }
