@@ -1,4 +1,4 @@
-<?php include_once('../app/views/includes/header_public.php'); ?>
+<?php include_once(__DIR__ . '/../includes/header_public.php'); ?>
 
 <div class=" container mt-4">
   <h2><?= htmlspecialchars($data['title']) ?></h2>
@@ -25,7 +25,7 @@
         <p><?= nl2br(htmlspecialchars($data['review'])) ?></p>
       <?php endif; ?>
       
-</div>"
+</div>
     </div>
     </div>
 <?php include_once(__DIR__ . '/../includes/footer.php'); ?>

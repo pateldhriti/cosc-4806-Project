@@ -10,7 +10,8 @@ class Api {
   }
 
   public function search_movie($title) {
-    $url = "http://www.omdbapi.com/?apikey=" . $this->omdb_key . "&t=" . urlencode($title);
+    $key = $_ENV['omdb_key'];
+    $url = "http://www.omdbapi.com/?apikey=$KEY&T=" . urlencode($title);
     $json= file_get_contents($url);
     return json_decode($json, true);
   }

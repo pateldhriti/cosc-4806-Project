@@ -1,18 +1,19 @@
 <?php
 
-class Movie extends Controller {
-    public function index() {
+class Movie extends Controller
+{
+    public function index()
+    {
         $this->view('movie/index');
     }
-
     public function search() {
-        if (!isset($_REQUEST['movie']) || empty($_REQUEST['movie'])) {
-            header("Location: /movie");
+        if (!isset($_GET['movie']) || empty(trim($_GET['movie']))) {
+            header("Location: /Movie");
             exit;
         }
 
         $api = $this->model('Api');
-        $movie_title = $_REQUEST['movie'];
+        $movie_title = $_GET['movie'];
         $movie = $api->search_movie($movie_title);
 
         $this->view('movie/show', [
@@ -20,21 +21,5 @@ class Movie extends Controller {
             'title' => $movie_title
         ]);
     }
-
-    public function review($title = null, $rating = null) {
-        if (!$title || !$rating || $rating < 1 || $rating > 5) {
-            die("Invalid review request.");
-        }
-
-        $api = $this->model('Api');
-        $review = $api->getGeminiReview($title, $rating);
-        $movie = $api->search_movie($title);
-
-        $this->view('movie/show', [
-            'movie' => $movie,
-            'title' => $title,
-            'rating' => $rating,
-            'review' => $review
-        ]);
-    }
+   
 }
