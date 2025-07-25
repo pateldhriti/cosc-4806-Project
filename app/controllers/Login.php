@@ -15,11 +15,18 @@ class Login extends Controller {
             $stmt->execute([$username]);
             $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
+
+            
+
+            // 🔍 Debugging (optional - can remove after confirming)
+            // echo '<pre>'; var_dump($user); var_dump($password); exit;
+
             if ($user && password_verify($password, $user['password'])) {
                 $_SESSION['auth'] = true;
                 $_SESSION['user'] = [
                     'id' => $user['id'],
-                    'username' => $user['username']
+                    'username' => $user['username'],
+                    'role' => $user['role'] ?? 'user'
                 ];
                 header("Location: /Home");
                 exit;
@@ -32,5 +39,6 @@ class Login extends Controller {
             exit;
         }
     }
+
 
 }
