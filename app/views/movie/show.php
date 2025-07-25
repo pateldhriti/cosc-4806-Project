@@ -18,7 +18,8 @@
       <h4>⭐ Rate this Movie</h4>
       <form action="/index.php" method="post">  
         <input type="hidden" name="url" value="Movie/saveRating">
-        <input type="hidden" name="title" value="<?= htmlspecialchars($data['title']) ?>">"
+        <input type="hidden" name="title" value="<?= htmlspecialchars($data['title']) ?>">
+
       <div class="d-flex flex-wrap gap-2 mt-2">
         <?php for ($i = 1; $i <= 5; $i++): ?>
           <button type="submit" name="rating" value="<?= $i ?>" class="btn btn-outline-warning"><?= $i ?> Star</button>
@@ -27,9 +28,7 @@
           </form>
 
         
-      <?php for ($i = 1; $i <= 5; $i++): ?>
-        <a href="/Movie/review/<?= urlencode($data['title']) ?>/<?= $i ?>" class="btn btn-outline-warning me-1"><?= $i ?> Star</a>
-      <?php endfor; ?>
+    
 
       <?php if (!empty($data['review'])): ?>
           <hr>

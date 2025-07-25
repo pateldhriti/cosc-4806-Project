@@ -1,4 +1,3 @@
-
 <?php
 
 class Movie extends Controller
@@ -10,7 +9,6 @@ class Movie extends Controller
 
     public function search()
     {
-
         if (!isset($_GET['movie']) || empty(trim($_GET['movie']))) {
             header("Location: /Movie");
             exit;
@@ -19,7 +17,6 @@ class Movie extends Controller
         $api = $this->model('Api');
         $movie_title = htmlspecialchars(trim($_GET['movie']));
         $movie = $api->search_movie($movie_title);
-
 
         if (!$movie || $movie['Response'] === 'False') {
             die("Movie not found.");
@@ -48,25 +45,26 @@ class Movie extends Controller
             'rating' => $rating,
             'review' => $review
         ]);
+    }
 
-        public function saverating() {
-            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-                $title = $_POST['title'];
-                $rating = $_POST['rating'];
+    public function saveRating()
+    {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $title = $_POST['title'] ?? '';
+            $rating = (int)($_POST['rating'] ?? 0);
 
-                if($rating < 1 || $rating > 5) {
-                    die("Invalid rating");
-                }
-
-                $user_id = $_SESSION['user_id'] ?? 0;
-
-                $db = db_connect();
-                $stmt = $db->prepare("INSERT INTO ratings (user_id, movie_title, rating) VALUES (?, ?, ?)");
-                $stmt->execute([$user_id, $title, $rating]);
-
-                header("Loaction: /Movie/review/" . urlencode($title) . "/" . $rating);
-                exit;
+            if ($rating < 1 || $rating > 5 || empty($title)) {
+                die("Invalid rating or movie title.");
             }
+
+            $user_id = $_SESSION['user_id'] ?? 0;
+
+            $db = db_connect();
+            $stmt = $db->prepare("INSERT INTO ratings (user_id, movie_title, rating) VALUES (?, ?, ?)");
+            $stmt->execute([$user_id, $title, $rating]);
+
+            header("Location: /Movie/review/" . urlencode($title) . "/" . $rating);
+            exit;
         }
     }
 }

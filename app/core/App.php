@@ -29,9 +29,15 @@ class App {
     }
 
     protected function parseUrl() {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['url'])) {
+            return explode('/', filter_var(rtrim($_POST['url'], '/'), FILTER_SANITIZE_URL));
+        }
+
         if (isset($_GET['url'])) {
             return explode('/', filter_var(rtrim($_GET['url'], '/'), FILTER_SANITIZE_URL));
         }
+
         return ['Movie'];
     }
+
 }
