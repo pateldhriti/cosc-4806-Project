@@ -21,16 +21,20 @@
 
       <hr>
       <h4>⭐ Rate this Movie</h4>
-      <form action="/index.php" method="post">  
-        <input type="hidden" name="url" value="Movie/saveRating">
-        <input type="hidden" name="title" value="<?= htmlspecialchars($data['title']) ?>">
+      <?php if (isset($_SESSION['user'])): ?>
+        <form method="post" action="/index.php">
+          <input type="hidden" name="url" value="Movie/saveRating">
+          <input type="hidden" name="title" value="<?= htmlspecialchars($data['title']) ?>">
 
-        <div class="d-flex flex-wrap gap-2 mt-2">
-          <?php for ($i = 1; $i <= 5; $i++): ?>
-            <button type="submit" name="rating" value="<?= $i ?>" class="btn btn-outline-warning"><?= $i ?> Star</button>
-          <?php endfor; ?>
-        </div>
-      </form>
+          <div class="d-flex gap-2 mt-2">
+            <?php for ($i = 1; $i <= 5; $i++): ?>
+              <button type="submit" name="rating" value="<?= $i ?>" class="btn btn-outline-warning"><?= $i ?> Star</button>
+            <?php endfor; ?>
+          </div>
+        </form>
+      <?php else: ?>
+        <p class="text-muted mt-3">🔒 You must be logged in to rate this movie.</p>
+      <?php endif; ?>
 
       <?php if (!empty($data['review'])): ?>
         <hr>

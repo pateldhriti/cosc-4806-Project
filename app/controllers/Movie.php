@@ -1,6 +1,5 @@
 <?php
 require_once(__DIR__ . '/../core/Database.php');
-require_once(__DIR__ . '/../models/Api.php'); // ✅ Fix for "Api class not found"
 
 class Movie extends Controller {
 
@@ -41,21 +40,25 @@ class Movie extends Controller {
         $movie = $api->search_movie($title);
         $review = $api->getGeminiReview($title, $rating);
 
+        $flash = isset($_SESSION['flash']) ? $_SESSION['flash'] : null;
+        unset($_SESSION['flash']);
+
         $this->view('movie/show', [
             'movie' => $movie,
             'title' => $title,
             'rating' => $rating,
-            'review' => $review
+            'review' => $review,
+            'flash' => $flash
         ]);
     }
 
     public function saveRating()
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $movieTitle = trim($_POST['title']);
+            $movieTitle = ucwords(strtolower(trim($_POST['title'])));
             $rating = intval($_POST['rating']);
 
-            // ✅ Get the user ID from the session
+            // ✅ Get the user ID from the session (or guest)
             $user_id = isset($_SESSION['user']['id']) ? $_SESSION['user']['id'] : 0;
 
             // ✅ Save to database
@@ -64,8 +67,12 @@ class Movie extends Controller {
             $stmt->execute([$user_id, $movieTitle, $rating]);
 
             // ✅ Optional: generate AI review
-            $api = new Api();  // This is the line that needs require_once
+            require_once(__DIR__ . '/../models/Api.php');
+            $api = new Api();
             $review = $api->getGeminiReview($movieTitle, $rating);
+
+            // ✅ Add flash message
+            $_SESSION['flash'] = "🎉 Thanks for rating $movieTitle!";
 
             // ✅ Redirect to review page
             header('Location: /index.php?url=Movie/review/' . urlencode($movieTitle) . '/' . $rating);

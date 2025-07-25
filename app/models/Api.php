@@ -29,7 +29,8 @@ class Api
     // Generate AI review using Gemini API
     public function getGeminiReview($title, $rating)
     {
-        $api_key = getenv('GEMINI');
+        $api_key = getenv('GEMINI'); // From Replit secrets
+
         $prompt = "Write a short, friendly and informative review of the movie '$title' rated $rating out of 5 stars.";
 
         $postData = [
@@ -46,7 +47,6 @@ class Api
         curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($postData));
 
         $response = curl_exec($ch);
-        file_put_contents('gemini_debug.log', $response); // log response
 
         if (curl_errno($ch)) {
             return "AI Error: " . curl_error($ch);
@@ -55,7 +55,16 @@ class Api
         curl_close($ch);
 
         $data = json_decode($response, true);
-        return $data['candidates'][0]['content']['parts'][0]['text'] ?? "No AI review available.";
+
+        // Optional: log raw Gemini API response
+        file_put_contents('gemini_debug.log', $response);
+
+        if (isset($data['candidates'][0]['content']['parts'][0]['text'])) {
+            return $data['candidates'][0]['content']['parts'][0]['text'];
+        }
+
+        return "No AI review available.";
     }
+
 
 }
