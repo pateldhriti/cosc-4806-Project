@@ -1,6 +1,4 @@
 
-
-
 <?php
 
 class Movie extends Controller
@@ -50,5 +48,25 @@ class Movie extends Controller
             'rating' => $rating,
             'review' => $review
         ]);
+
+        public function saverating() {
+            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                $title = $_POST['title'];
+                $rating = $_POST['rating'];
+
+                if($rating < 1 || $rating > 5) {
+                    die("Invalid rating");
+                }
+
+                $user_id = $_SESSION['user_id'] ?? 0;
+
+                $db = db_connect();
+                $stmt = $db->prepare("INSERT INTO ratings (user_id, movie_title, rating) VALUES (?, ?, ?)");
+                $stmt->execute([$user_id, $title, $rating]);
+
+                header("Loaction: /Movie/review/" . urlencode($title) . "/" . $rating);
+                exit;
+            }
+        }
     }
 }
