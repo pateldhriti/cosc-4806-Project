@@ -64,6 +64,24 @@ class Movie extends Controller {
         ]);
     }
 
+
+    public function myRatings()
+    {
+        if (!isset($_SESSION['user'])) {
+            header("Location: /index.php?url=login");
+            exit;
+        }
+
+        $user_id = $_SESSION['user']['id'];
+
+        $db = db_connect();
+        $stmt = $db->prepare("SELECT movie_title, rating, created_at FROM ratings WHERE user_id = ? ORDER BY created_at DESC");
+        $stmt->execute([$user_id]);
+        $ratings = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $this->view('movie/myratings', ['ratings' => $ratings]);
+    }
+
     public function saveRating()
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -75,6 +93,7 @@ class Movie extends Controller {
 
             // ✅ Save to database
             $db = db_connect();
+            $userReview = trim($_POST['user_review'] ?? '');
             $stmt = $db->prepare("INSERT INTO ratings (user_id, movie_title, rating, created_at) VALUES (?, ?, ?, NOW())");
             $stmt->execute([$user_id, $movieTitle, $rating]);
 

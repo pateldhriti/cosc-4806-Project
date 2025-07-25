@@ -37,12 +37,25 @@
           <input type="hidden" name="url" value="Movie/saveRating">
           <input type="hidden" name="title" value="<?= htmlspecialchars($data['title']) ?>">
 
-          <div class="d-flex gap-2 mt-2">
-            <?php for ($i = 1; $i <= 5; $i++): ?>
-              <button type="submit" name="rating" value="<?= $i ?>" class="btn btn-outline-warning"><?= $i ?> Star</button>
-            <?php endfor; ?>
+          <div class="mb-3">
+            <label class="form-label">⭐ Select Rating</label>
+            <select class="form-select" name="rating" required>
+              <option value="" disabled selected>Choose...</option>
+              <?php for ($i = 1; $i <= 5; $i++): ?>
+                <option value="<?= $i ?>"><?= $i ?> Star</option>
+              <?php endfor; ?>
+            </select>
           </div>
+
+          <div class="mb-3">
+            <label for="user_review" class="form-label">✍️ Write Your Review (optional)</label>
+            <textarea class="form-control" name="user_review" rows="3" placeholder="What did you think about the movie?"></textarea>
+          </div>
+
+          <button type="submit" class="btn btn-primary">Submit Review</button>
         </form>
+
+
       <?php else: ?>
         <p class="text-muted mt-3">🔒 You must be logged in to rate this movie.</p>
       <?php endif; ?>

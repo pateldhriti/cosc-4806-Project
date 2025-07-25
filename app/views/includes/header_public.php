@@ -11,6 +11,8 @@
 
     <div class="ms-auto">
       <?php if (!isset($_SESSION['auth'])): ?>
+        <a class="btn btn-outline-light me-2" href="/index.php?url=movie/myRatings">My Ratings</a>
+
         <a class="btn btn-outline-light" href="/index.php?url=login">Login</a>
       <?php else: ?>
         <a class="btn btn-outline-danger" href="/index.php?url=logout">Logout</a>
