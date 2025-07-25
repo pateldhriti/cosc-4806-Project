@@ -11,32 +11,36 @@ class Api {
 
   public function search_movie($title) {
     $url = "http://www.omdbapi.com/?apikey=" . $this->omdb_key . "&t=" . urlencode($title);
-    $response = file_get_contents($url);
-    return json_decode($response, true);
+    $json= file_get_contents($url);
+    return json_decode($json, true);
   }
 
   public function getGeminiReview($title, $rating) {
+
+    $url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=" . $this->gemini_key;
     $prompt ="Give a review for the movie " . $title . " with a rating of " . $rating . " out of 5.";
 
-    $data = [
-        'contents' => [
-            [ 'parts' => [['text' => $prompt]]]
+    $postData = json_encode([
+        "contents" => [
+            [
+                "role" => "user",
+                "parts" => [
+                    ["text" => $prompt]
+                ]
+            ]
         ]
-     ];
+    ]);
 
-    $opts = [
-      'http' =>  [
-        'method'  => 'POST',
-        'header'  => 'Content-Type: application/json\r\n".
-                      "Authorization: Bearer ' . $this->gemini_key ,
-        'content' => json_encode($data)
-    ]
-      ];
+    $ch = curl_init($url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $postData);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
 
-    $context  = stream_context_create($opts);
-    $URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=" . $this->gemini_key;
-    $result = file_get_contents($URL, false, $context);
-    $json = json_decode($result, true);
+    $response = curl_exec($ch);
+    curl_close($ch);
+
+    $result = json_decode($response, true);
 
     return $json['candidates'][0]['content']['parts'][0]['text'] ?? "No review available.";
   }
