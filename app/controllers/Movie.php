@@ -23,9 +23,15 @@ class Movie extends Controller {
             die("Movie not found.");
         }
 
+        $db = db_connect();
+        $stmt = $db->prepare("SELECT ROUND(AVG(rating), 1) as avg_rating FROM ratings WHERE movie_title = ?");
+        $stmt->execute([$movie_title]);
+        $avgRating = $stmt->fetchColumn()
+
         $this->view('movie/show', [
             'movie' => $movie,
-            'title' => $movie_title
+            'title' => $movie_title,
+                    'avg_rating' =>  $avgRating
         ]);
     }
 
@@ -40,6 +46,11 @@ class Movie extends Controller {
         $movie = $api->search_movie($title);
         $review = $api->getGeminiReview($title, $rating);
 
+        $db = db_connect();
+        $stmt = $db->prepare("SELECT ROUND(AVG(rating), 1) as avg_rating FROM ratings WHERE movie_title = ?");
+        $stmt->execute([$title]);
+        $avgRating = $stmt->fetchColumn();
+
         $flash = isset($_SESSION['flash']) ? $_SESSION['flash'] : null;
         unset($_SESSION['flash']);
 
@@ -48,7 +59,8 @@ class Movie extends Controller {
             'title' => $title,
             'rating' => $rating,
             'review' => $review,
-            'flash' => $flash
+            'flash' => $flash,
+          'avg_rating' => $avgRating
         ]);
     }
 

@@ -24,6 +24,11 @@
       <p><strong>Director:</strong> <?= $data['movie']['Director'] ?? 'N/A' ?></p>
       <p><strong>IMDB Rating:</strong> <?= $data['movie']['imdbRating'] ?? 'N/A' ?>/10</p>
       <p><strong>Plot:</strong> <?= $data['movie']['Plot'] ?? 'N/A' ?></p>
+      <?php if (!empty($data['avgRating'])): ?>
+        <p><strong>Average User Rating:</strong> <?= $data['avgRating'] ?>/5 ⭐</p>
+      <?php endif; ?>
+
+      
 
       <hr>
       <h4>⭐ Rate this Movie</h4>
