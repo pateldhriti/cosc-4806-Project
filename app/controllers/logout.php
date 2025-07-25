@@ -1,5 +1,9 @@
 <?php
 
-session destroy();
-header("Location: /Login");
-exit();
+class Logout {
+    public function index() {
+        session_destroy();
+        header("Location: /");
+        exit;
+    }
+}
