@@ -10,18 +10,12 @@ class Login extends Controller {
             $username = trim($_POST['username'] ?? '');
             $password = trim($_POST['password'] ?? '');
 
-            $db = db_connect();
-            $stmt = $db->prepare("SELECT * FROM users WHERE username = ?");
-            $stmt->execute([$username]);
-            $user = $stmt->fetch(PDO::FETCH_ASSOC);
-
-            if ($user && password_verify($password, $user['password'])) {
-                // ✅ Store user details in session
+            // Example credentials check (replace with DB lookup later)
+            if ($username === 'admin' && $password === 'password') {
                 $_SESSION['auth'] = true;
                 $_SESSION['user'] = [
-                    'id' => $user['id'],
-                    'username' => $user['username'],
-                    'role' => $user['role'] ?? 'user'
+                    'id' => 1,
+                    'username' => $username
                 ];
                 header("Location: /Home");
                 exit;
@@ -29,6 +23,10 @@ class Login extends Controller {
                 $error = "Invalid credentials";
                 $this->view('login/index', ['error' => $error]);
             }
+        } else {
+            // If accessed directly via GET
+            header("Location: /index.php?url=login");
+            exit;
         }
     }
 }

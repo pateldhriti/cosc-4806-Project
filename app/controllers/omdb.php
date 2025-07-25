@@ -2,15 +2,24 @@
 
 class Omdb extends Controller {
     public function index() {
-      $query_url = "http://www.omdbapi.com/?apikey=" . $_ENV['omdb_key'] . "&t=the+matrix&y=1999";
+        // Make sure the key is retrieved safely
+        $apiKey = getenv('OMDB'); // Or use $_ENV['OMDB'] if you're sure it's loaded
 
-      $json = file_get_contents($query_url);
-          $phpObj = json_decode($json);
-          $movie = (array) $phpObj;
+        $query_url = "http://www.omdbapi.com/?apikey=" . urlencode($apiKey) . "&t=" . urlencode("the matrix") . "&y=1999";
 
-          echo "<pre>";
-          print_r($movie);
-          die;
-      
+        // Get API response
+        $json = file_get_contents($query_url);
+        if (!$json) {
+            die("Failed to fetch data from OMDB.");
+        }
+
+        // Decode JSON to PHP array
+        $phpObj = json_decode($json, true);
+
+        // Output the data
+        echo "<pre>";
+        print_r($phpObj);
+        echo "</pre>";
+        exit;
     }
 }

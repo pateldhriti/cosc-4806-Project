@@ -3,6 +3,12 @@
 <div class="container mt-4">
   <h2><?= htmlspecialchars($data['title']) ?></h2>
 
+  <?php if (!empty($data['flash'])): ?>
+    <div class="alert alert-success mt-3">
+      <?= htmlspecialchars($data['flash']) ?>
+    </div>
+  <?php endif; ?>
+
   <div class="row mt-3">
     <div class="col-md-4">
       <?php if (!empty($data['movie']['Poster']) && $data['movie']['Poster'] !== "N/A"): ?>
@@ -43,6 +49,8 @@
       <?php else: ?>
         <p><em>No AI review available.</em></p>
       <?php endif; ?>
-
+    </div>
+  </div>
+</div>
 
 <?php include_once(__DIR__ . '/../includes/footer.php'); ?>
