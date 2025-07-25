@@ -10,12 +10,16 @@ class Login extends Controller {
             $username = trim($_POST['username'] ?? '');
             $password = trim($_POST['password'] ?? '');
 
-            // Example credentials check (replace with DB lookup later)
-            if ($username === 'admin' && $password === 'password') {
+            $db = db_connect();
+            $stmt = $db->prepare("SELECT * FROM users WHERE username = ?");
+            $stmt->execute([$username]);
+            $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if ($user && password_verify($password, $user['password'])) {
                 $_SESSION['auth'] = true;
                 $_SESSION['user'] = [
-                    'id' => 1,
-                    'username' => $username
+                    'id' => $user['id'],
+                    'username' => $user['username']
                 ];
                 header("Location: /Home");
                 exit;
@@ -24,9 +28,9 @@ class Login extends Controller {
                 $this->view('login/index', ['error' => $error]);
             }
         } else {
-            // If accessed directly via GET
             header("Location: /index.php?url=login");
             exit;
         }
     }
+
 }
