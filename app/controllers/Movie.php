@@ -26,12 +26,12 @@ class Movie extends Controller {
         $db = db_connect();
         $stmt = $db->prepare("SELECT ROUND(AVG(rating), 1) as avg_rating FROM ratings WHERE movie_title = ?");
         $stmt->execute([$movie_title]);
-        $avgRating = $stmt->fetchColumn()
+        $avgRating = $stmt->fetchColumn(); // ✅ Semicolon added
 
         $this->view('movie/show', [
             'movie' => $movie,
             'title' => $movie_title,
-                    'avg_rating' =>  $avgRating
+            'avg_rating' =>  $avgRating
         ]);
     }
 
