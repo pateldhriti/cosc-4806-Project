@@ -1,4 +1,4 @@
-<?php include_once 'app/views/includes/header_public.php'; ?>
+<?php include_once ('../app/views/includes/header_public.php'); ?>
 
 <div class ="container mt-5">
   <h2 class="mb-4 text-center">Search for a movie</h2>"
