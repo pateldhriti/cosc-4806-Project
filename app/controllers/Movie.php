@@ -1,7 +1,9 @@
 <?php
+require_once(__DIR__ . '/../core/Database.php');
 
-class Movie extends Controller
-{
+
+class Movie extends Controller {
+
     public function index()
     {
         $this->view('movie/index');
