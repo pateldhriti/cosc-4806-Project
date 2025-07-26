@@ -5,17 +5,14 @@ class Api
     // Search movie from OMDB API
     public function search_movie($title)
     {
-        $api_key = getenv('OMDB'); // Secret key from Replit
+        $api_key = getenv('OMDB');
 
-        // Clean title (e.g., "KoiMilGaya" → "Koi Mil Gaya")
         $cleanTitle = preg_replace('/(?<!\ )[A-Z]/', ' $0', $title);
         $cleanTitle = trim(ucwords(strtolower($cleanTitle)));
 
         $url = "http://www.omdbapi.com/?apikey=" . urlencode($api_key) . "&t=" . urlencode($cleanTitle);
 
         $response = file_get_contents($url);
-
-        // ✅ Log the raw OMDB API response for debugging
         file_put_contents('omdb_debug.log', $response);
 
         if (!$response) return false;
@@ -26,10 +23,10 @@ class Api
         return $data;
     }
 
-    // Generate AI review using Gemini API
+    // ✅ Generate AI Review using Gemini REST API
     public function getGeminiReview($title, $rating)
     {
-        $api_key = getenv('GEMINI'); // From Replit secrets
+        $api_key = getenv('GEMINI');
 
         $prompt = "Write a short, friendly and informative review of the movie '$title' rated $rating out of 5 stars.";
 
@@ -55,8 +52,6 @@ class Api
         curl_close($ch);
 
         $data = json_decode($response, true);
-
-        // Optional: log raw Gemini API response
         file_put_contents('gemini_debug.log', $response);
 
         if (isset($data['candidates'][0]['content']['parts'][0]['text'])) {
@@ -65,6 +60,4 @@ class Api
 
         return "No AI review available.";
     }
-
-
 }
